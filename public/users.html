@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 목록</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+</head>
+<body>
+    <h1>회원 목록</h1>
+    <table id="userTable">  <!-- 사용자 목록을 표시할 테이블 -->
+        <thead>
+            <tr>
+                <th>이름</th>
+                <th>성별</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 여기에 JavaScript로 사용자 목록을 동적으로 추가 -->
+        </tbody>
+    </table>
+     <a href="index.html">홈으로 돌아가기</a>
+
+    <script>
+        // 서버에서 사용자 목록을 가져오는 함수
+        async function fetchUsers() {
+            try {
+                const response = await fetch('/users'); // /users API 호출 (GET 요청)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const users = await response.json(); // 응답을 JSON으로 파싱
+
+                const tableBody = document.getElementById('userTable').querySelector('tbody');
+                tableBody.innerHTML = ''; // 기존 내용 초기화
+
+                // 사용자 목록을 테이블에 추가
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = user.username;
+                    const genderCell = document.createElement('td');
+                    genderCell.textContent = user.gender === 'm' ? '남자' : '여자';
+
+                    row.appendChild(nameCell);
+                    row.appendChild(genderCell);
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                document.getElementById('userTable').querySelector('tbody').innerHTML = `<tr><td colspan="2">사용자 목록을 불러오는 데 실패했습니다.</td></tr>`;
+
+            }
+        }
+
+        // 페이지 로드 시 사용자 목록 가져오기
+        fetchUsers();
+    </script>
+</body>
+</html>
